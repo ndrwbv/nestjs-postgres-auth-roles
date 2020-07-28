@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, DeleteResult } from 'typeorm';
-import { UserEntity as User, UserEntity } from './../entities';
-import { UserModel } from 'models';
+import * as bcrypt from "bcrypt";
 
-import * as bcrypt from 'bcrypt';
-import { ConfigService, InjectConfig } from 'nestjs-config';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, UpdateResult, DeleteResult } from "typeorm";
+import { ConfigService, InjectConfig } from "nestjs-config";
+
+import { UserEntity as User, UserEntity } from "./../entities";
+import { UserModel } from "../models";
 
 @Injectable()
 export class UserService {
@@ -13,9 +14,9 @@ export class UserService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectConfig() private readonly config: ConfigService,
+    @InjectConfig() private readonly config: ConfigService
   ) {
-    this.saltRounds = config.get('app.salt_rounds', 10);
+    this.saltRounds = config.get("app.salt_rounds", 10);
   }
 
   async create(user: UserModel): Promise<User> {
@@ -23,18 +24,17 @@ export class UserService {
       ...user,
       password: await this.getHash(user.password),
     };
+
     const result = await this.userRepository.save(
-      this.userRepository.create(userToCreate),
+      this.userRepository.create(userToCreate)
     );
 
     return result;
   }
 
   async update(userEntity: UserEntity, user: UserModel): Promise<UserEntity> {
-    console.log(user);
     return await this.userRepository.save({
       ...userEntity,
-      class_id: user.class_id,
       name: user.name,
     });
   }
@@ -43,14 +43,6 @@ export class UserService {
     return await this.userRepository.findOne({
       where: {
         email,
-      },
-    });
-  }
-
-  async findByProfileName(profile_name: string): Promise<User | null> {
-    return await this.userRepository.findOne({
-      where: {
-        profile_name,
       },
     });
   }
@@ -81,8 +73,8 @@ export class UserService {
         email,
       },
       {
-        select: ['email', 'password', 'id', 'grant', 'name'],
-      },
+        select: ["email", "password", "id", "grant", "name"],
+      }
     );
   }
 }

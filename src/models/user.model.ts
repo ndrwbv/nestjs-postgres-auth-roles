@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsEmail } from 'class-validator';
+import { IsString, IsNumber, IsEmail } from "class-validator";
 
 export enum IGrant {
   ADMIN = 0,
@@ -7,8 +7,6 @@ export enum IGrant {
 }
 
 export class UserModel {
-  readonly id: number;
-
   @IsEmail()
   email: string;
 
@@ -17,8 +15,6 @@ export class UserModel {
 
   @IsString()
   password: string;
-
-  class_id?: number;
 
   @IsNumber()
   grant: IGrant;
